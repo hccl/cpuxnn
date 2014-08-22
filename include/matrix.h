@@ -34,7 +34,7 @@ namespace xnn {
         void transpose(const Matrix & lhs);
         void samplemax(const Matrix & lhs, UINT sampler_height, UINT sampler_width);
         void sampleavg(const Matrix & lhs, UINT sampler_height, UINT sampler_width);
-        void unsamplemax(const Matrix & lhs, const Matrix & input, UINT sampler_height, UINT sampler_width);
+        void unsamplemax(const Matrix & lhs, const Matrix & input, const Matrix & output, UINT sampler_height, UINT sampler_width);
         void unsampleavg(const Matrix & lhs, UINT sampler_height, UINT sampler_width);
         void copy(const Matrix & lhs);
         void zeros_elt();

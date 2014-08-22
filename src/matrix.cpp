@@ -213,21 +213,22 @@ namespace xnn {
             }
     }
 
-    void Matrix::unsamplemax(const Matrix & lhs, const Matrix & input,
+    void Matrix::unsamplemax(const Matrix & lhs, const Matrix & input, const Matrix & output,
                              UINT sampler_height, UINT sampler_width ) {
         UINT h = lhs.height() * sampler_height, w = lhs.width() * sampler_width;
         assert(height_ == h);
         assert(width_ == w);
         assert(input.height() == h);
         assert(input.width() == w);
-        float fsample, finput;
+        float fsample, finput, fout;
         for( UINT i = 0; i < lhs.height(); ++i )
             for ( UINT j = 0; j < lhs.width(); ++j ) {
                 fsample = lhs.get_elt(i, j);
+                fout = output.get_elt(i, j);
                 for (UINT m = 0; m < sampler_height; ++m)
                     for (UINT n = 0; n < sampler_width; ++n) {
                         finput = input.get_elt(i * sampler_height + m, j * sampler_width + n);
-                        if (finput == fsample)
+                        if (finput == fout)
                             this->set_elt(i * sampler_height + m, j * sampler_width + n, fsample);
                         else
                             this->set_elt(i * sampler_height + m, j * sampler_width + n, 0.0);

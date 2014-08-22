@@ -106,13 +106,15 @@ namespace xnn {
 
     void player::backpropmax(const Tensor4d & input, Tensor4d & deda_lm1) {
         der_active_function_();
+        delta_.eltProduct(this->de_da_);
         for(UINT ns = 0; ns < nsamples_; ++ns)
             for(UINT nc = 0; nc < nchannels_; ++nc)
-                deda_lm1.get_kernel(ns, nc).unsamplemax(delta_.get_kernel(ns, nc), input.get_kernel(ns, nc), sampler_height_, sampler_width_);
+                deda_lm1.get_kernel(ns, nc).unsamplemax(delta_.get_kernel(ns, nc), input.get_kernel(ns, nc), a_.get_kernel(ns, nc), sampler_height_, sampler_width_);
     }
 
     void player::backpropavg(const Tensor4d & input, Tensor4d & deda_lm1) {
         der_active_function_();
+        delta_.eltProduct(this->de_da_);
         for(UINT ns = 0; ns < nsamples_; ++ns)
             for(UINT nc = 0; nc < nchannels_; ++nc)
                 deda_lm1.get_kernel(ns, nc).unsampleavg(delta_.get_kernel(ns, nc), sampler_height_, sampler_width_);

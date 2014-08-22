@@ -38,7 +38,7 @@ int main(void) {
     UINT sampler_height = 1;
     UINT sampler_width = 2;
     UINT nclass = 2;
-    UINT epochs = 50;
+    UINT epochs = 20;
 
     /* load data and label */
     data = new Tensor4d(nsamples, 1, feature_height, feature_width);
