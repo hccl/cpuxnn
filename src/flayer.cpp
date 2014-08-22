@@ -95,6 +95,8 @@ namespace xnn {
         de_db_.matSum(delta_, 1);
         wtransp->transpose(weights_);
         deda_lm1.matProduct(delta_, *wtransp);
+        delete transp; transp = NULL;
+        delete wtransp; wtransp = NULL;
     }
 
     void flayer::updateweights() {
