@@ -251,7 +251,7 @@ namespace xnn {
         return *this;
     }
 
-    void Tensor4d::display() {
+    void Tensor4d::display() const {
         UINT height = dims_[0];
         UINT width = dims_[1];
         UINT kernel_height = dims_[2];

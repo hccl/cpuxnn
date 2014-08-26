@@ -12,12 +12,11 @@
 #define _PLAYER_H
 
 #include "tensor.h"
-
-using namespace std;
+#include "layer.h"
 
 namespace xnn {
 
-    class player {
+    class player: public layer {
     public:
         player();
         player(const UINT nsamples, const UINT nchannels, const UINT image_height, const UINT image_width,
@@ -25,13 +24,18 @@ namespace xnn {
         ~player();
 
         /* utilities */
-        virtual void initial();
-        virtual void propagate(const Tensor4d& input);
-        virtual void backprop(const Tensor4d& input, Tensor4d& deda_lm1);
+        void initial();
+        void propagate(const Tensor4d& input);
+        void backprop(const Tensor4d& input) {};
+        void backprop(const Tensor4d& input, Tensor4d& deda_lm1);
+        void updateweights() {};
 
         /* getters and setters */
-        Tensor4d & get_a () { return a_; };
-        Tensor4d & get_deda () { return de_da_; };
+        void set_a(const Tensor4d & data) {};
+        const Tensor4d & get_a() const { return a_; };
+        UINT get_nneu() const {};
+        UINT get_nneu_lm1() const {};
+        typename layer::elayertype get_ltype() { return this->ePoolLayer; };
 
     protected:
         void reset();
@@ -49,14 +53,11 @@ namespace xnn {
             eMaxPool,
             eUnPool,
         } ptype_;
-        Tensor4d a_;
-        Tensor4d de_da_;
-        Tensor4d delta_;
+
         UINT nsamples_;
         UINT nchannels_;
         UINT sampler_height_;
         UINT sampler_width_;
-        string name_;
     };
 }
 

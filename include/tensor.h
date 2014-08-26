@@ -39,7 +39,7 @@ namespace xnn {
         void ones_elt();
         void rand_elt();
         bool is_flatten() { return false; };
-        void display();
+        void display() const;
 
         /* operators */
         Tensor4d & operator = (const Tensor4d & rhs);

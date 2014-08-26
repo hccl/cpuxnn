@@ -13,7 +13,7 @@
  Author(s): Xingyu Na, August 2014
  */
 
-
+#include <vector>
 #include "clayer.h"
 #include "flayer.h"
 #include "player.h"
@@ -22,12 +22,10 @@ using namespace std;
 using namespace xnn;
 
 int main(void) {
+
     Tensor4d *data;
     Matrix *label;
-    clayer* c;
-    clayer* input;
-    player* p;
-    flayer* output;
+    vector<layer*> network;
 
     UINT nsamples = 5;
     UINT feature_height = 3;
@@ -93,64 +91,88 @@ int main(void) {
     assert((feature_height - filter_height + 1) % sampler_height == 0);
     assert((feature_width - filter_width + 1) % sampler_width == 0);
 
-    input = new clayer(nsamples, 1, 1, 1, 1, feature_height, feature_width, "data");
-    input->set_a(*data);
-
-    c = new clayer(nsamples, nfilter, filter_height, filter_width, 1, feature_height, feature_width, "conv");
-    c->initial();
-
-    p = new player(nsamples, nfilter, feature_height - filter_height + 1, feature_width - filter_width + 1,
-		sampler_height, sampler_width, "pool", 'm');
-    p->initial();
-
+    network.push_back(new clayer(nsamples, 1, 1, 1, 1, feature_height, feature_width, "data"));
+    network.push_back(new clayer(nsamples, nfilter, filter_height, filter_width, 1, feature_height, feature_width, "conv"));
+    network.push_back(new player(nsamples, nfilter, feature_height - filter_height + 1, feature_width - filter_width + 1,
+                                 sampler_height, sampler_width, "pool", 'm'));
     UINT nflat = nfilter * (feature_height - filter_height + 1) * (feature_width - filter_width + 1) / (sampler_height * sampler_width);
-    output = new flayer(nsamples, nclass, nflat, true, "output");
-    output->initial();
+    network.push_back(new flayer(nsamples, nclass, nflat, true, "output"));
+
+    /* initialize */
+    vector<layer*>::iterator lIter;
+    vector<layer*>::reverse_iterator rlIter;
+    for(lIter = network.begin(); lIter != network.end(); ++lIter) {
+        if((*lIter)->get_name() == "data")
+            (*lIter)->set_a(*data);
+        else
+            (*lIter)->initial();
+    }
 
     Matrix *err;
     float ftemp;
-    Matrix *deda_mat = new Matrix(nsamples, nflat);
-    Matrix *a_mat = new Matrix(nsamples, nflat);
-    err = &output->get_deda();
+    /* intercomm between pooling layer and full layer. It's a mess, to
+     * be fixed later. */
+    Tensor4d *deda_mat = new Tensor4d(1, 1, nsamples, nflat);
+    Tensor4d *a_mat = new Tensor4d(1, 1, nsamples, nflat);
+    Tensor4d *deda_lm1;
+    const Tensor4d *input;
+    err = &((*(network.end()-1))->get_deda().get_kernel(0, 0));
     for(UINT e = 0; e < epochs; ++e) {
         /* main routine */
         cout << "+++++++ epoch " << e + 1 << " +++++++" << endl;
 
         /* propagate */
-        c->propagate(input->get_a());
-        p->propagate(c->get_a());
-        p->get_a().flatten(*a_mat);
-        output->propagate(*a_mat);
+        input = &((*(network.begin()))->get_a());
+        for(lIter = network.begin(); lIter != network.end(); ++lIter) {
+            if((*lIter)->get_name() != "data")
+                (*lIter)->propagate(*input);
+            if((*lIter)->get_ltype() == layer::ePoolLayer && (*(lIter+1))->get_ltype() == layer::eFullLayer) {
+                (*lIter)->get_a().flatten(a_mat->get_kernel(0, 0));
+                input = a_mat;
+            } else {
+                input = &((*lIter)->get_a());
+            }
+        }
         cout << "output is :" << endl;
-        output->get_a().display();
+        (*(network.end()-1))->get_a().display();
 
         /* get error */
         for(UINT s = 0; s < nsamples; ++s) {
             for(UINT d = 0; d < nclass; ++d) {
-                ftemp = label->get_elt(s, d) - output->get_a().get_elt(s, d);
+                ftemp = label->get_elt(s, d) - (*(network.end()-1))->get_a().get_elt(0, 0, s, d);
                 err->set_elt(s, d, ftemp);
             }
         }
 
-        /* calculate gradient and back propagate */
-        output->backprop(*a_mat, *deda_mat);
-        p->get_deda().tensorize(*deda_mat);
-        p->backprop(c->get_a(), c->get_deda());
-        c->backprop(input->get_a(), input->get_deda());
-
-        /* update weights */
-        c->updateweights();
-        output->updateweights();
+        /* back propagate */
+        for(rlIter = network.rbegin(); rlIter != network.rend(); ++rlIter) {
+            if((*rlIter)->get_name() != "data") {
+                /* calculate gradient and back propagate */
+                if((*rlIter)->get_ltype() == layer::eFullLayer && (*(rlIter+1))->get_ltype() == layer::ePoolLayer) {
+                    input = a_mat;
+                    deda_lm1 = deda_mat;
+                } else {
+                    input = &((*(rlIter+1))->get_a());
+                    deda_lm1 = &((*(rlIter+1))->get_deda());
+                }
+                if((*rlIter)->get_ltype() == layer::ePoolLayer && (*(rlIter-1))->get_ltype() == layer::eFullLayer)
+                    (*rlIter)->get_deda().tensorize(deda_mat->get_kernel(0, 0));
+                (*rlIter)->backprop(*input, *deda_lm1);
+                /* update weights */
+                (*rlIter)->updateweights();
+            }
+        }
     }
 
     delete a_mat;
     delete deda_mat;
-    delete output;
-    delete p;
-    delete c;
-    delete input;
     delete label;
     delete data;
+    while(!network.empty()) {
+        delete network.back();
+        network.pop_back();
+    }
+    network.clear();
 
     return 0;
 }

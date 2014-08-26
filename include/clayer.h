@@ -12,10 +12,11 @@
 #define _CLAYER_H
 
 #include "tensor.h"
+#include "layer.h"
 
 namespace xnn {
 
-    class clayer {
+    class clayer: public layer {
     public:
         clayer();
         clayer(const UINT nsamples, const UINT nfilters, const UINT filter_height, const UINT filter_width, 
@@ -23,20 +24,19 @@ namespace xnn {
         virtual ~clayer();
 
         /* utilities */
-        virtual void initial();
-        virtual void propagate(const Tensor4d & input);
-        virtual void backprop(const Tensor4d & input, Tensor4d & deda_lm1);
-        virtual void computegrad(const Tensor4d & input) {};
-        virtual void updateweights();
+        void initial();
+        void propagate(const Tensor4d & input);
+        void backprop(const Tensor4d & input);
+        void backprop(const Tensor4d & input, Tensor4d & deda_lm1);
+        void computegrad(const Tensor4d & input) {};
+        void updateweights();
 
         /* getters and setters */
         void set_a (const Tensor4d& data);
-        Tensor4d & get_a () { return a_; };
-        Tensor4d & get_w () { return weights_; };
-        Tensor4d & get_b () { return biases_; };
-        Tensor4d & get_deda () { return de_da_; };
-        Tensor4d & get_dedw () { return de_dw_; };
-        Tensor4d & get_dedb () { return de_db_; };
+        const Tensor4d & get_a () const { return a_; };
+        UINT get_nneu() const {};
+        UINT get_nneu_lm1() const {};
+        typename layer::elayertype get_ltype() { return this->eConvLayer; };
 
     protected:
         void reset();
@@ -44,20 +44,12 @@ namespace xnn {
         void der_active_function_ ();
         float activate (float input) { return input; };
         float der_activate (float input) { return 1.0; };
-        Tensor4d a_;
-        Tensor4d weights_;
-        Tensor4d biases_;
-        Tensor4d de_dw_;
-        Tensor4d de_db_;
-        Tensor4d de_da_;
-        Tensor4d delta_;
         UINT nsamples_;
         UINT nfilters_;
         UINT nchannels_;
         UINT filter_height_;
         UINT filter_width_;
         float learning_rate_;
-        std::string name_;
     };
 }
 
