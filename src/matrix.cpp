@@ -303,6 +303,10 @@ namespace xnn {
         std::cout << height_ << " x " << width_;
     }
 
+	float* Matrix::getRowData(int row) const{
+		return &data_[row*width_];
+	}
+
     /* operators */
     Matrix & Matrix::operator = (const Matrix & rhs) {
         if (this == &rhs)

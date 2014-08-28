@@ -45,11 +45,11 @@ namespace xnn {
 
         /**** utilities ****/
         virtual void initial() = 0;
-        virtual void propagate(const Tensor& input) = 0;
+        virtual void propagate(const Tensor& input, const std::string name) = 0;
         /* for those the (l - 1) layer terminate the error back propagation */
-        virtual void backprop(const Tensor& input) = 0;
+        virtual void backprop(const Tensor& input, const std::string name) = 0;
         /* for those the (l - 1) layer need to back propagate error */
-        virtual void backprop(const Tensor& input, Tensor& deda_lm1) = 0;
+        virtual void backprop(const Tensor& input, Tensor& deda_lm1, const std::string name) = 0;
         /* update weights and biases for weighted layer */
         virtual void updateweights() = 0;
 

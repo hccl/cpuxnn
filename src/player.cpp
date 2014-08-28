@@ -17,7 +17,7 @@ namespace xnn {
     }
 
     player::player(const UINT nsamples, const UINT nchannels, const UINT image_height, const UINT image_width,
-                   const UINT sampler_height, const UINT sampler_width, const string name, const char ptype) {
+                   const UINT sampler_height, const UINT sampler_width, const string name, const char ptype, const enumFuncType actType) {
         nsamples_ = nsamples;
         nchannels_ = nchannels;
         sampler_height_ = sampler_height;
@@ -26,6 +26,7 @@ namespace xnn {
         de_da_ = Tensor4d(nsamples, nchannels, image_height / sampler_height, image_width / sampler_width);
         delta_ = Tensor4d(nsamples, nchannels, image_height / sampler_height, image_width / sampler_width);
         name_ = name;
+		funcType_ = actType;
         switch (ptype) {
         case 'm':
             ptype_ = player::eMaxPool;
@@ -53,7 +54,7 @@ namespace xnn {
         de_da_.zeros_elt();
     }
     
-    void player::propagate(const Tensor4d & input) {
+    void player::propagate(const Tensor4d & input, const std::string name) {
         assert(this->a_.get_dim(2) == input.get_dim(2) / this->sampler_height_ );
         assert(this->a_.get_dim(3) == input.get_dim(3) / this->sampler_width_ );
 
@@ -91,7 +92,7 @@ namespace xnn {
         delete output; output = NULL;
     }
 
-    void player::backprop(const Tensor4d & input, Tensor4d & deda_lm1) {
+    void player::backprop(const Tensor4d & input, Tensor4d & deda_lm1, const std::string name) {
         switch(this->ptype_) {
         case player::eAvgPool:
             backpropavg(input, deda_lm1);
@@ -125,7 +126,7 @@ namespace xnn {
             for(UINT j = 0; j < sum.get_dim(1); ++j) {
                 for(UINT m = 0; m < sum.get_dim(2); ++m)
                     for(UINT n = 0; n < sum.get_dim(3); ++n)
-                        a_.set_elt(i, j, m, n, activate(sum.get_elt(i, j, m, n)));
+                        a_.set_elt(i, j, m, n, neurons_.activate(sum.get_elt(i, j, m, n), funcType_));
             }
         }
     }
@@ -135,6 +136,6 @@ namespace xnn {
             for(UINT j = 0; j < a_.get_dim(1); ++j)
                 for(UINT m = 0; m < a_.get_dim(2); ++m)
                     for(UINT n = 0; n < a_.get_dim(3); ++n)
-                        delta_.set_elt(i, j, m, n, der_activate(a_.get_elt(i, j, m, n)));
+						delta_.set_elt(i, j, m, n, neurons_.der_activate(a_.get_elt(i, j, m, n), funcType_));
     }
 }

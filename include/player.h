@@ -13,6 +13,7 @@
 
 #include "tensor.h"
 #include "layer.h"
+#include "neuron.h"
 
 namespace xnn {
 
@@ -20,29 +21,30 @@ namespace xnn {
     public:
         player();
         player(const UINT nsamples, const UINT nchannels, const UINT image_height, const UINT image_width,
-               const UINT sampler_height, const UINT sampler_width, const string name, const char ptype);
+               const UINT sampler_height, const UINT sampler_width, const string name, const char ptype, enumFuncType actType);
         ~player();
 
         /* utilities */
         void initial();
-        void propagate(const Tensor4d& input);
-        void backprop(const Tensor4d& input) {};
-        void backprop(const Tensor4d& input, Tensor4d& deda_lm1);
+        void propagate(const Tensor4d& input, const std::string name);
+        void backprop(const Tensor4d& input, const std::string name) {};
+        void backprop(const Tensor4d& input, Tensor4d& deda_lm1, const std::string name);
         void updateweights() {};
 
         /* getters and setters */
         void set_a(const Tensor4d & data) {};
         const Tensor4d & get_a() const { return a_; };
-        UINT get_nneu() const {};
-        UINT get_nneu_lm1() const {};
-        typename layer::elayertype get_ltype() { return this->ePoolLayer; };
+		UINT get_nneu() const { return 0; };
+        UINT get_nneu_lm1() const { return 0; };
+//        typename layer::elayertype get_ltype() { return this->ePoolLayer; };
+		elayertype get_ltype() { return this->ePoolLayer; };
 
     protected:
         void reset();
         void active_function_ (const Tensor4d & sum);
         void der_active_function_ ();
-        float activate (float input) { return input; };
-        float der_activate (float input) { return 1.0; };
+//        float activate (float input) { return input; };
+//        float der_activate (float input) { return 1.0; };
         void propavg(const Tensor4d & input);
         void propmax(const Tensor4d & input);
         void backpropavg(const Tensor4d & input, Tensor4d & deda_lm1);
@@ -58,6 +60,9 @@ namespace xnn {
         UINT nchannels_;
         UINT sampler_height_;
         UINT sampler_width_;
+
+		Neuron neurons_;
+		enumFuncType funcType_;
     };
 }
 
