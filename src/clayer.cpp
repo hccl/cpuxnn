@@ -9,7 +9,7 @@
  */
 
 #include "clayer.h"
-
+    
 namespace xnn {
 
     clayer::clayer() {

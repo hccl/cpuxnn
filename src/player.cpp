@@ -26,8 +26,8 @@ namespace xnn {
         de_da_ = Tensor4d(nsamples, nchannels, image_height / sampler_height, image_width / sampler_width);
         delta_ = Tensor4d(nsamples, nchannels, image_height / sampler_height, image_width / sampler_width);
         name_ = name;
-		funcType_ = actType;
-		neurons_.init(funcType_);
+        funcType_ = actType;
+        neurons_.init(funcType_);
         switch (ptype) {
         case 'm':
             ptype_ = player::eMaxPool;
@@ -137,6 +137,6 @@ namespace xnn {
             for(UINT j = 0; j < a_.get_dim(1); ++j)
                 for(UINT m = 0; m < a_.get_dim(2); ++m)
                     for(UINT n = 0; n < a_.get_dim(3); ++n)
-						delta_.set_elt(i, j, m, n, neurons_.der_activate(a_.get_elt(i, j, m, n)));
+                        delta_.set_elt(i, j, m, n, neurons_.der_activate(a_.get_elt(i, j, m, n)));
     }
 }

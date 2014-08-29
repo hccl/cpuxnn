@@ -31,8 +31,8 @@ namespace xnn {
         a_ = Tensor4d(1, 1, nsamples, nneurons);
         is_trainable_ = is_trainable;
         name_ = name;
-		funcType_ = actType;
-		neurons_.init(funcType_);
+        funcType_ = actType;
+        neurons_.init(funcType_);
     }
 
     flayer::flayer(const UINT nsamples, const UINT nneurons, const UINT nneurons_lm1, bool is_trainable, const std::string name, const enumFuncType actType) {
@@ -47,8 +47,8 @@ namespace xnn {
         de_db_ = Tensor4d(1, 1, 1, nneurons);
         is_trainable_ = is_trainable;
         name_ = name;
-		funcType_ = actType;
-		neurons_.init(funcType_);
+        funcType_ = actType;
+        neurons_.init(funcType_);
     }
 
     flayer::flayer(const Tensor4d& weights, const Tensor4d& biases, bool is_trainable, const std::string name, const enumFuncType actType) {
@@ -60,8 +60,8 @@ namespace xnn {
         biases_ = biases;
         is_trainable_ = is_trainable;
         name_ = name;
-		funcType_ = actType;
-		neurons_.init(funcType_);
+        funcType_ = actType;
+        neurons_.init(funcType_);
     }
 
     void flayer::initial() {
@@ -81,12 +81,12 @@ namespace xnn {
         b->matProduct(*eye, biases_.get_kernel(0, 0));
         z->get_kernel(0, 0).matAdd(*b);
         if (name_ == "output")
-		{
-			softmax_function_(*z);
-		}else
-		{
-			active_function_(*z);
-		}
+        {
+            softmax_function_(*z);
+        }else
+        {
+            active_function_(*z);
+        }
 
         delete b; b = NULL;
         delete eye; eye = NULL;
@@ -95,13 +95,13 @@ namespace xnn {
 
     void flayer::backprop(const Tensor4d& input) {
         Matrix *transp = new Matrix(input.get_kernel(0, 0).width(), input.get_kernel(0, 0).height());
-		if (name_ == "output")
-		{
-			der_softmax_function_();
-		}else
-		{
-			der_active_function_();
-		} 
+        if (name_ == "output")
+        {
+            der_softmax_function_();
+        }else
+        {
+            der_active_function_();
+        } 
         delta_.eltProduct(this->de_da_);
         transp->transpose(input.get_kernel(0, 0));
         de_dw_.get_kernel(0, 0).matProduct(*transp, delta_.get_kernel(0, 0));
@@ -112,13 +112,13 @@ namespace xnn {
     void flayer::backprop(const Tensor4d& input, Tensor4d& deda_lm1) {
         Matrix *transp = new Matrix(input.get_kernel(0, 0).width(), input.get_kernel(0, 0).height());
         Matrix *wtransp = new Matrix(weights_.get_kernel(0, 0).width(), weights_.get_kernel(0, 0).height());
-		if (name_ == "output")
-		{
-			der_softmax_function_();
-		}else
-		{
-			der_active_function_();
-		} 
+        if (name_ == "output")
+        {
+            der_softmax_function_();
+        }else
+        {
+            der_active_function_();
+        } 
         delta_.eltProduct(this->de_da_);
         transp->transpose(input.get_kernel(0, 0));
         de_dw_.get_kernel(0, 0).matProduct(*transp, delta_.get_kernel(0, 0));
@@ -150,21 +150,21 @@ namespace xnn {
         }
     }
 
-	void flayer::softmax_function_ (const Tensor4d& sum){
+    void flayer::softmax_function_ (const Tensor4d& sum){
         assert(this->a_.get_kernel(0, 0).width() == sum.get_kernel(0, 0).width());
-        assert(this->a_.get_kernel(0, 0).height() == sum.get_kernel(0, 0).height());	
-		float sumRow = 0.0f;
-		for(UINT i = 0; i < sum.get_kernel(0, 0).height(); ++i) {
-			for(UINT j = 0; j < sum.get_kernel(0, 0).width(); ++j) {
-				a_.set_elt(0, 0, i, j, expf(sum.get_elt(0, 0, i, j)));
-				sumRow += a_.get_elt(0, 0, i, j);
-			}
-			for(UINT j = 0; j < sum.get_kernel(0, 0).width(); j++) {
-				a_.set_elt(0, 0, i, j, a_.get_elt(0, 0, i, j)/sumRow);
-			}
-			sumRow = 0.0f;
-		}
-	}
+        assert(this->a_.get_kernel(0, 0).height() == sum.get_kernel(0, 0).height());    
+        float sumRow = 0.0f;
+        for(UINT i = 0; i < sum.get_kernel(0, 0).height(); ++i) {
+            for(UINT j = 0; j < sum.get_kernel(0, 0).width(); ++j) {
+                a_.set_elt(0, 0, i, j, expf(sum.get_elt(0, 0, i, j)));
+                sumRow += a_.get_elt(0, 0, i, j);
+            }
+            for(UINT j = 0; j < sum.get_kernel(0, 0).width(); j++) {
+                a_.set_elt(0, 0, i, j, a_.get_elt(0, 0, i, j)/sumRow);
+            }
+            sumRow = 0.0f;
+        }
+    }
 
     void flayer::der_active_function_ () {
         for(UINT i = 0; i < a_.get_kernel(0, 0).height(); ++i)
@@ -172,12 +172,12 @@ namespace xnn {
                 delta_.set_elt(0, 0, i, j, neurons_.der_activate(a_.get_elt(0, 0, i, j)));
     }
 
-	void flayer::der_softmax_function_ () {
-		for(UINT i = 0; i < a_.get_kernel(0, 0).height(); ++i) {
-			for(UINT j = 0; j < a_.get_kernel(0, 0).width(); ++j) {
-				delta_.set_elt(0, 0, i, j, der_softmax(a_.get_elt(0, 0, i, j)));
-			}
-		}	
-	}
+    void flayer::der_softmax_function_ () {
+        for(UINT i = 0; i < a_.get_kernel(0, 0).height(); ++i) {
+            for(UINT j = 0; j < a_.get_kernel(0, 0).width(); ++j) {
+                delta_.set_elt(0, 0, i, j, der_softmax(a_.get_elt(0, 0, i, j)));
+            }
+        }    
+    }
 
 }
