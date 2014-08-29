@@ -52,7 +52,7 @@ namespace xnn {
         de_db_.zeros_elt();
         de_da_.zeros_elt();
         delta_.zeros_elt();
-        learning_rate_ = 0.001;
+        learning_rate_ = 0.08;
     }
 
     void clayer::propagate(const Tensor4d & input) {
