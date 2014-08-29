@@ -25,19 +25,19 @@ namespace xnn {
 
         /* utilities */
         void initial();
-        void propagate(const Tensor4d & input);
-        void backprop(const Tensor4d & input);
-        void backprop(const Tensor4d & input, Tensor4d & deda_lm1);
+        void propagate(const Tensor4d& input);
+        void backprop(const Tensor4d& input);
+        void backprop(const Tensor4d& input, Tensor4d& deda_lm1);
         void computegrad(const Tensor4d & input) {};
         void updateweights();
 
         /* getters and setters */
         void set_a (const Tensor4d& data);
         const Tensor4d & get_a () const { return a_; };
-        UINT get_nneu() const {};
-        UINT get_nneu_lm1() const {};
-        typename layer::elayertype get_ltype() { return this->eConvLayer; };
-
+		UINT get_nneu() const { return 0; };
+        UINT get_nneu_lm1() const { return 0; };
+//        typename layer::elayertype get_ltype() { return this->eConvLayer; };
+		elayertype get_ltype() { return this->eConvLayer; };
     protected:
         void reset();
         void active_function_ (const Tensor4d & sum);

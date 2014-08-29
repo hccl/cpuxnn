@@ -17,6 +17,8 @@
 #include "clayer.h"
 #include "flayer.h"
 #include "player.h"
+#include "dataProcess.h"
+#include "common.h"
 
 using namespace std;
 using namespace xnn;
