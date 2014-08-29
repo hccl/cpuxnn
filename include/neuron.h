@@ -18,11 +18,14 @@ class Neuron
 public:
 	Neuron();
 	~Neuron();
-	float activate(float z, enumFuncType funcType);
-	float der_activate(float a, enumFuncType funcType);
+	void init(enumFuncType funcType);
+	float activate(float z);
+	float der_activate(float a);
 
 
 private:
+	enumFuncType funcType_;
+
 	float act_Sigmoid(float z);
 	float act_Tanh(float z);
 	float act_Linear(float z);

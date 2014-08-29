@@ -36,7 +36,7 @@ typedef enum
 	SIGMOID,
 	TANH,
 	LINEAR,
-	RELU
+	RELU,
 }enumFuncType;
 
 #define FMAX_VALUE 1e+10;

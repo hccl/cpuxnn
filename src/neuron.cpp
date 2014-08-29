@@ -18,6 +18,10 @@ Neuron::~Neuron()
 {
 }
 
+void Neuron::init(enumFuncType funcType) {
+	funcType_ = funcType;
+};
+
 float Neuron::act_Sigmoid(float z) {
 	return 1/(1+expf(-z));
 }
@@ -50,8 +54,8 @@ float Neuron::der_Relu(float a) {
 	return a > 0.0f ? 1 : 0.0f;
 }
 
-float Neuron::activate(float z, enumFuncType funcType) {
-	switch (funcType){
+float Neuron::activate(float z) {
+	switch (funcType_){
 	case SIGMOID:
 		return act_Sigmoid(z);
 		break;
@@ -69,8 +73,8 @@ float Neuron::activate(float z, enumFuncType funcType) {
 	}
 }
 
-float Neuron::der_activate(float a, enumFuncType funcType) {
-	switch (funcType){
+float Neuron::der_activate(float a) {
+	switch (funcType_){
 	case SIGMOID:
 		return der_Sigmoid(a);
 		break;

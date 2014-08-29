@@ -26,9 +26,9 @@ namespace xnn {
 
         /* utilities */
         void initial();
-        void propagate(const Tensor4d& input, const std::string name);
-        void backprop(const Tensor4d& input, const std::string name) {};
-        void backprop(const Tensor4d& input, Tensor4d& deda_lm1, const std::string name);
+        void propagate(const Tensor4d& input);
+        void backprop(const Tensor4d& input) {};
+        void backprop(const Tensor4d& input, Tensor4d& deda_lm1);
         void updateweights() {};
 
         /* getters and setters */

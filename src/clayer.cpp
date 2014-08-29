@@ -55,7 +55,7 @@ namespace xnn {
         learning_rate_ = 0.08;
     }
 
-    void clayer::propagate(const Tensor4d & input, const std::string name) {
+    void clayer::propagate(const Tensor4d & input) {
         /* 4d tensor storing output feature maps */
         Tensor4d *output = new Tensor4d(input.get_dim(0), weights_.get_dim(1), 
                                         input.get_dim(2) - weights_.get_dim(2) + 1,
@@ -73,7 +73,7 @@ namespace xnn {
         delete output; output = NULL;
     }
 
-    void clayer::backprop(const Tensor4d & input, const std::string name) {
+    void clayer::backprop(const Tensor4d & input) {
         Tensor4d * transp = new Tensor4d(input.get_dim(1), input.get_dim(0), input.get_dim(2), input.get_dim(3));
 
         der_active_function_();
@@ -85,7 +85,7 @@ namespace xnn {
         delete transp; transp = NULL;
     }
 
-    void clayer::backprop(const Tensor4d & input, Tensor4d & deda_lm1, const std::string name) {
+    void clayer::backprop(const Tensor4d & input, Tensor4d & deda_lm1) {
         Tensor4d * transp = new Tensor4d(input.get_dim(1), input.get_dim(0), input.get_dim(2), input.get_dim(3));
         Tensor4d * wt = new Tensor4d(weights_.get_dim(1), weights_.get_dim(0), weights_.get_dim(2), weights_.get_dim(3));
         der_active_function_();
