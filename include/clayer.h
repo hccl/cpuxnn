@@ -34,10 +34,10 @@ namespace xnn {
         /* getters and setters */
         void set_a (const Tensor4d& data);
         const Tensor4d & get_a () const { return a_; };
-		UINT get_nneu() const { return 0; };
+        UINT get_nneu() const { return 0; };
         UINT get_nneu_lm1() const { return 0; };
 //        typename layer::elayertype get_ltype() { return this->eConvLayer; };
-		elayertype get_ltype() { return this->eConvLayer; };
+        elayertype get_ltype() { return this->eConvLayer; };
     protected:
         void reset();
         void active_function_ (const Tensor4d & sum);
@@ -54,3 +54,4 @@ namespace xnn {
 }
 
 #endif
+    

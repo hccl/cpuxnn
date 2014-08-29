@@ -33,10 +33,10 @@ typedef unsigned short USHORT;
 typedef map<string,vector<int> > labmap;
 typedef enum 
 {
-	SIGMOID,
-	TANH,
-	LINEAR,
-	RELU,
+    SIGMOID,
+    TANH,
+    LINEAR,
+    RELU,
 }enumFuncType;
 
 #define FMAX_VALUE 1e+10;

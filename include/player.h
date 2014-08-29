@@ -34,10 +34,10 @@ namespace xnn {
         /* getters and setters */
         void set_a(const Tensor4d & data) {};
         const Tensor4d & get_a() const { return a_; };
-		UINT get_nneu() const { return 0; };
+        UINT get_nneu() const { return 0; };
         UINT get_nneu_lm1() const { return 0; };
 //        typename layer::elayertype get_ltype() { return this->ePoolLayer; };
-		elayertype get_ltype() { return this->ePoolLayer; };
+        elayertype get_ltype() { return this->ePoolLayer; };
 
     protected:
         void reset();
@@ -61,8 +61,8 @@ namespace xnn {
         UINT sampler_height_;
         UINT sampler_width_;
 
-		Neuron neurons_;
-		enumFuncType funcType_;
+        Neuron neurons_;
+        enumFuncType funcType_;
     };
 }
 

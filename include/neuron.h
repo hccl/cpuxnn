@@ -16,24 +16,24 @@
 class Neuron
 {
 public:
-	Neuron();
-	~Neuron();
-	void init(enumFuncType funcType);
-	float activate(float z);
-	float der_activate(float a);
+    Neuron();
+    ~Neuron();
+    void init(enumFuncType funcType);
+    float activate(float z);
+    float der_activate(float a);
 
 
 private:
-	enumFuncType funcType_;
+    enumFuncType funcType_;
 
-	float act_Sigmoid(float z);
-	float act_Tanh(float z);
-	float act_Linear(float z);
-	float act_Relu(float z);
-	float der_Sigmoid(float a);
-	float der_Tanh(float a);
-	float der_Linear(float a);
-	float der_Relu(float a);
+    float act_Sigmoid(float z);
+    float act_Tanh(float z);
+    float act_Linear(float z);
+    float act_Relu(float z);
+    float der_Sigmoid(float a);
+    float der_Tanh(float a);
+    float der_Linear(float a);
+    float der_Relu(float a);
 };
 
 #endif

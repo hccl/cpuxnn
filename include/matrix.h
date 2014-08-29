@@ -52,7 +52,7 @@ namespace xnn {
         void set_elt(UINT i, UINT j, float f);
         float get_elt(UINT i, UINT j) const;
         float * get_data() const { return data_; };
-		float* getRowData(int row) const;
+        float* getRowData(int row) const;
     private:
         float *data_;
         UINT width_;
@@ -60,4 +60,4 @@ namespace xnn {
     };
 }
 
-#endif				/* _MATRIX_H_ */
+#endif                /* _MATRIX_H_ */
