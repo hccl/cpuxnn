@@ -24,9 +24,20 @@
 #include <cmath>
 #include <cstring>
 #include <cassert>
+#include <map>
+#include <cstdio>
+using namespace std;
 
 typedef unsigned int UINT;
 typedef unsigned short USHORT;
+typedef map<string,vector<int> > labmap;
+typedef enum 
+{
+    SIGMOID,
+    TANH,
+    LINEAR,
+    RELU,
+}enumFuncType;
 
 #define FMAX_VALUE 1e+10;
 #define FMIN_VALUE -1e+10;

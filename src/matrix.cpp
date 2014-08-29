@@ -43,7 +43,7 @@ namespace xnn {
         assert(height_ == lhs.height());
         assert(width_ == rhs.width());
         float sum;
-	/* simple implementation for test */
+    /* simple implementation for test */
         for (UINT i = 0; i < height_; ++i)
             for (UINT j = 0; j < width_; ++j) {
                 sum = 0.0;
@@ -301,6 +301,10 @@ namespace xnn {
 
     void Matrix::print_size() const {
         std::cout << height_ << " x " << width_;
+    }
+
+    float* Matrix::getRowData(int row) const{
+        return &data_[row*width_];
     }
 
     /* operators */
